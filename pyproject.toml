@@ -6,6 +6,8 @@ authors = ["Karakchiev Aleksandr <realrushen@gmail.com>"]
 
 [tool.poetry.dependencies]
 python = "^3.9"
+python-telegram-bot = "^13.11"
+environs = "^9.5.0"
 
 [tool.poetry.dev-dependencies]
 
