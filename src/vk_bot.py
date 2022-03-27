@@ -8,7 +8,7 @@ from environs import Env
 from vk_api.longpoll import VkLongPoll, VkEventType
 
 # Load environment variables
-from src.dialogflow_api import detect_intent_text
+from src.dialogflow_api import detect_intent
 
 env = Env()
 env.read_env()
@@ -22,18 +22,24 @@ logger = logging.getLogger(__name__)
 
 # Constants
 VK_BOT_TOKEN = env.str('VK_BOT_TOKEN')
+RANDOM_ID = random.randint(1, 1000)
 
 
 def reply_customer(event, vk_api):
+    """
+    Reply customer using DialogFlow model.
+    Do nothing if intent was not recognized
+    """
     user_id = event.user_id
     text = event.text
-    reply = detect_intent_text(session_id=user_id, text=text)
+    intent = detect_intent(session_id=user_id, text=text)
 
-    vk_api.messages.send(
-        user_id=user_id,
-        message=reply,
-        random_id=random.randint(1, 1000)
-    )
+    if not intent.is_fallback:
+        vk_api.messages.send(
+            user_id=user_id,
+            message=intent.fulfilment_text,
+            random_id=RANDOM_ID
+        )
 
 
 def main():

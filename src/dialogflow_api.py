@@ -10,8 +10,8 @@ LANGUAGE_CODE = 'ru-RU'
 PROJECT_ID = env.str('PROJECT_ID')
 
 
-def detect_intent_text(session_id: object, text: object, project_id: str = PROJECT_ID,
-                       language_code: str = LANGUAGE_CODE) -> str:
+def detect_intent(session_id: object, text: object, project_id: str = PROJECT_ID,
+                  language_code: str = LANGUAGE_CODE):
     """Returns the result of detect intent with texts as inputs.
 
     Using the same `session_id` between requests allows continuation
@@ -27,4 +27,5 @@ def detect_intent_text(session_id: object, text: object, project_id: str = PROJE
         request={"session": session, "query_input": query_input}
     )
 
-    return response.query_result.fulfillment_text
+    return response.query_result.intent
+

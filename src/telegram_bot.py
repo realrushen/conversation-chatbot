@@ -7,7 +7,7 @@ from telegram import Update
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, CallbackContext
 
 # Load environment variables from .env file
-from src.dialogflow_api import detect_intent_text
+from src.dialogflow_api import detect_intent
 
 env = Env()
 env.read_env()
@@ -32,8 +32,8 @@ def reply_customer(update: Update, context: CallbackContext) -> None:
     """Reply customer using DialogFlow model"""
     chat_id = update.message.chat_id
     text = update.message.text
-    reply = detect_intent_text(session_id=chat_id, text=text)
-    update.message.reply_text(reply)
+    intent = detect_intent(session_id=chat_id, text=text)
+    update.message.reply_text(intent.fulfillment_text)
 
 
 def main() -> None:
