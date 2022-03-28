@@ -8,6 +8,7 @@ from environs import Env
 from vk_api.longpoll import VkLongPoll, VkEventType
 
 from src.dialogflow_api import get_reply
+from src.log_handlers import TelegramChatHandler
 
 # Load environment variables
 env = Env()
@@ -15,20 +16,11 @@ env.read_env()
 
 # Constants
 VK_BOT_TOKEN = env.str('VK_BOT_TOKEN')
+LOGS_BOT_TOKEN = env.str('LOGS_BOT_TOKEN')
+CHAT_ID_FOR_LOGS = env.int('CHAT_ID_FOR_LOGS')
 DEBUG = env.int('DEBUG')
 
-# Enable logging
-if DEBUG:
-    logging_level = logging.DEBUG
-else:
-    logging_level = logging.INFO
-
-logging.basicConfig(
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging_level
-)
-
 logger = logging.getLogger(__name__)
-
 
 
 def reply_customer(event, vk_api):
@@ -50,14 +42,40 @@ def reply_customer(event, vk_api):
         logger.debug('FALLBACK intent on "%s"' % text)
 
 
-def main():
+def start_polling():
+    """Starts long polling to VK API"""
     vk_session = vk.VkApi(token=VK_BOT_TOKEN)
     vk_api = vk_session.get_api()
     longpolling = VkLongPoll(vk_session)
+    logger.info('VK support bot started')
+
     for event in longpolling.listen():
-        if event.type == VkEventType.MESSAGE_NEW and event.to_me:
-            reply_customer(event, vk_api)
+        try:
+            if event.type == VkEventType.MESSAGE_NEW and event.to_me:
+                reply_customer(event, vk_api)
+        except Exception as e:
+            logger.error(e)
+
+
+def main():
+    # Enable logging
+    if DEBUG:
+        logging_level = logging.DEBUG
+    else:
+        logging_level = logging.INFO
+
+    logging.basicConfig(
+        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging_level
+    )
+
+    telegram_handler = TelegramChatHandler(token=LOGS_BOT_TOKEN, chat_id=CHAT_ID_FOR_LOGS)
+    formatter = logging.Formatter("%(asctime)s %(levelname)s %(message)s")
+    telegram_handler.setFormatter(formatter)
+    logger.addHandler(telegram_handler)
+
+    start_polling()
 
 
 if __name__ == "__main__":
     main()
+    logger.info('VK support bot stopped')
