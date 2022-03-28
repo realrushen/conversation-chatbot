@@ -7,22 +7,29 @@ import vk_api as vk
 from environs import Env
 from vk_api.longpoll import VkLongPoll, VkEventType
 
-# Load environment variables
 from src.dialogflow_api import get_reply
 
+# Load environment variables
 env = Env()
 env.read_env()
 
+# Constants
+VK_BOT_TOKEN = env.str('VK_BOT_TOKEN')
+RANDOM_ID = random.randint(1, 1000)
+DEBUG = env.int('DEBUG')
+
 # Enable logging
+if DEBUG:
+    logging_level = logging.DEBUG
+else:
+    logging_level = logging.INFO
+
 logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO
 )
 
 logger = logging.getLogger(__name__)
 
-# Constants
-VK_BOT_TOKEN = env.str('VK_BOT_TOKEN')
-RANDOM_ID = random.randint(1, 1000)
 
 
 def reply_customer(event, vk_api):

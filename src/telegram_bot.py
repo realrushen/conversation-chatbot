@@ -14,10 +14,16 @@ env.read_env()
 
 # Constants
 TELEGRAM_BOT_TOKEN = env.str('TELEGRAM_BOT_TOKEN')
+DEBUG = env.int('DEBUG')
 
 # Enable logging
+if DEBUG:
+    logging_level = logging.DEBUG
+else:
+    logging_level = logging.INFO
+
 logging.basicConfig(
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging_level
 )
 
 logger = logging.getLogger(__name__)
