@@ -1,5 +1,8 @@
+from dataclasses import dataclass
+
 from environs import Env
 from google.cloud import dialogflow
+from google.cloud.dialogflow_v2.types import session as gcd_session
 
 # Load environment variables
 env = Env()
@@ -10,8 +13,14 @@ LANGUAGE_CODE = 'ru-RU'
 PROJECT_ID = env.str('PROJECT_ID')
 
 
-def detect_intent(session_id: object, text: object, project_id: str = PROJECT_ID,
-                  language_code: str = LANGUAGE_CODE):
+@dataclass
+class Reply:
+    text: str
+    is_fallback: bool
+
+
+def detect_intent(session_id: int, text: str, project_id: str = PROJECT_ID,
+                  language_code: str = LANGUAGE_CODE) -> gcd_session.DetectIntentResponse:
     """Returns the result of detect intent with texts as inputs.
 
     Using the same `session_id` between requests allows continuation
@@ -27,5 +36,18 @@ def detect_intent(session_id: object, text: object, project_id: str = PROJECT_ID
         request={"session": session, "query_input": query_input}
     )
 
-    return response.query_result.intent
+    return response
 
+
+def create_reply(response: gcd_session.DetectIntentResponse) -> Reply:
+    """Creates reply object"""
+    reply_text: str = response.query_result.fulfillment_text
+    is_fallback: bool = response.query_result.intent.is_fallback
+
+    return Reply(text=reply_text, is_fallback=is_fallback)
+
+
+def get_reply(text: str, session_id: int) -> Reply:
+    response = detect_intent(session_id=session_id, text=text)
+    reply = create_reply(response)
+    return reply

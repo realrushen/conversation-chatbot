@@ -8,7 +8,7 @@ from environs import Env
 from vk_api.longpoll import VkLongPoll, VkEventType
 
 # Load environment variables
-from src.dialogflow_api import detect_intent
+from src.dialogflow_api import get_reply
 
 env = Env()
 env.read_env()
@@ -32,12 +32,12 @@ def reply_customer(event, vk_api):
     """
     user_id = event.user_id
     text = event.text
-    intent = detect_intent(session_id=user_id, text=text)
+    reply = get_reply(text=text, session_id=user_id)
 
-    if not intent.is_fallback:
+    if not reply.is_fallback:
         vk_api.messages.send(
             user_id=user_id,
-            message=intent.fulfilment_text,
+            message=reply.text,
             random_id=RANDOM_ID
         )
 
