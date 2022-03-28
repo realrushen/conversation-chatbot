@@ -15,7 +15,6 @@ env.read_env()
 
 # Constants
 VK_BOT_TOKEN = env.str('VK_BOT_TOKEN')
-RANDOM_ID = random.randint(1, 1000)
 DEBUG = env.int('DEBUG')
 
 # Enable logging
@@ -25,7 +24,7 @@ else:
     logging_level = logging.INFO
 
 logging.basicConfig(
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging_level
 )
 
 logger = logging.getLogger(__name__)
@@ -45,8 +44,10 @@ def reply_customer(event, vk_api):
         vk_api.messages.send(
             user_id=user_id,
             message=reply.text,
-            random_id=RANDOM_ID
+            random_id=random.randint(1, 1000)
         )
+    else:
+        logger.debug('FALLBACK intent on "%s"' % text)
 
 
 def main():
