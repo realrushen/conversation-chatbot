@@ -1,14 +1,18 @@
+import argparse
+import logging
 from dataclasses import dataclass
+from pprint import pprint
 
 import requests
 from environs import Env
 from google.cloud import dialogflow
 
-# Load environment variables from .env file
 env = Env()
 env.read_env()
 
 PROJECT_ID = env.str('PROJECT_ID')
+
+logger = logging.getLogger(__name__)
 
 
 @dataclass
@@ -43,11 +47,12 @@ def create_intent(project_id: str, display_name: str,
         request={"parent": parent, "intent": intent}
     )
 
-    print("Intent created: {}".format(response))
+    logger.info('Intent created: %s' % response)
 
 
 def is_json(url: str) -> bool:
     response = requests.head(url, allow_redirects=True)
+    response.raise_for_status()
     header = response.headers
     content_type = header.get('content-type')
 
@@ -63,14 +68,23 @@ def get_intents(url: str) -> list[Intent]:
             intent_answer = intent_contents['answer']
             intent = Intent(name=intent_name, questions=intent_questions, answer=intent_answer)
             intents.append(intent)
+    logger.info('Found %d intents', len(intents))
     return intents
 
 
 def main() -> None:
-    url = 'https://dvmn.org/media/filer_public/a7/db/a7db66c0-1259-4dac-9726-2d1fa9c44f20/questions.json'
-    intents = get_intents(url)
-    if not intents:
-        return
+    parser = argparse.ArgumentParser(description='Script to learn DialogFlow model')
+    parser.add_argument('url', type=str, help='Url to json file with learning data')
+    parser.add_argument('-d', '--debug', action='store_true', help='Runs script with logging level DEBUG')
+    args = parser.parse_args()
+
+    logging_level = logging.DEBUG if args.debug else logging.INFO
+    logging.basicConfig(
+        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging_level
+    )
+
+    intents = get_intents(args.url)
+
     for intent in intents:
         create_intent(
             project_id=PROJECT_ID,
