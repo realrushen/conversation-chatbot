@@ -5,10 +5,9 @@ from environs import Env
 from telegram import Update
 from telegram.ext import Updater, MessageHandler, Filters, CallbackContext
 
-from src.dialogflow_api import get_reply
-from src.log_handlers import TelegramChatHandler
+from dialogflow_api import get_reply
+from log_handlers import TelegramChatHandler
 
-# Load environment variables from .env file
 env = Env()
 env.read_env()
 
@@ -16,7 +15,7 @@ env.read_env()
 TELEGRAM_BOT_TOKEN = env.str('TELEGRAM_BOT_TOKEN')
 LOGS_BOT_TOKEN = env.str('LOGS_BOT_TOKEN')
 CHAT_ID_FOR_LOGS = env.str('CHAT_ID_FOR_LOGS')
-DEBUG = env.int('DEBUG')
+DEBUG = env.bool('DEBUG')
 
 logger = logging.getLogger(__name__)
 

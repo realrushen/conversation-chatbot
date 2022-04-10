@@ -7,10 +7,9 @@ import vk_api as vk
 from environs import Env
 from vk_api.longpoll import VkLongPoll, VkEventType
 
-from src.dialogflow_api import get_reply
-from src.log_handlers import TelegramChatHandler
+from dialogflow_api import get_reply
+from log_handlers import TelegramChatHandler
 
-# Load environment variables
 env = Env()
 env.read_env()
 
@@ -18,7 +17,7 @@ env.read_env()
 VK_BOT_TOKEN = env.str('VK_BOT_TOKEN')
 LOGS_BOT_TOKEN = env.str('LOGS_BOT_TOKEN')
 CHAT_ID_FOR_LOGS = env.int('CHAT_ID_FOR_LOGS')
-DEBUG = env.int('DEBUG')
+DEBUG = env.bool('DEBUG')
 
 logger = logging.getLogger(__name__)
 
@@ -26,7 +25,7 @@ logger = logging.getLogger(__name__)
 def reply_customer(event, vk_api):
     """
     Reply customer using DialogFlow model.
-    Do nothing if intent was not recognized
+    Do nothing if intent was not recognized.
     """
     user_id = event.user_id
     text = event.text
@@ -74,8 +73,8 @@ def main():
     logger.addHandler(telegram_handler)
 
     start_polling()
+    logger.info('VK support bot stopped')
 
 
 if __name__ == "__main__":
     main()
-    logger.info('VK support bot stopped')
