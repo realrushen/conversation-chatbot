@@ -62,8 +62,10 @@ def is_json(url: str) -> bool:
 def get_intents(url: str) -> list[Intent]:
     intents = []
     if is_json(url):
-        intents_dict: dict = requests.get(url).json()
-        for intent_name, intent_contents in intents_dict.items():
+        response_with_data_for_intents = requests.get(url)
+        response_with_data_for_intents.raise_for_status()
+        data_for_intents = response_with_data_for_intents.json()
+        for intent_name, intent_contents in data_for_intents.items():
             intent_questions = intent_contents['questions']
             intent_answer = intent_contents['answer']
             intent = Intent(name=intent_name, questions=intent_questions, answer=intent_answer)
