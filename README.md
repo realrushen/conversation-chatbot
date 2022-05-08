@@ -7,11 +7,7 @@ This project developed using [Python 3.9](https://www.python.org/downloads/relea
 design and integrate a conversational user interface.
 
 This repository contains two bots. One for popular [Russsian Social Network VKontakte](https://vk.com/) and second
-for [Telegram Messanger](https://telegram.org/). This bots deployed, feel free to check it out down below.
-
-#### [VK Bot](https://vk.com/im?sel=-212203023)
-
-#### [Telegram Bot](https://t.me/LastStandHelper_bot/)
+for [Telegram Messanger](https://telegram.org/). 
 
 ## How to Install and Run
 
