@@ -11,7 +11,7 @@ for [Telegram Messanger](https://telegram.org/).
 
 ## How to Install and Run
 
-Make shure you have installed [Python 3.9](https://www.python.org/downloads/release/python-390/)
+Make sure you have installed [Python 3.9](https://www.python.org/downloads/release/python-390/)
 and [poetry](https://python-poetry.org/docs/#installation)
 
 1. Clone repository
